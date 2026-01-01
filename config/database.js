@@ -46,6 +46,18 @@ async function connectDB() {
         console.error('   4. If password has special characters, they need to be URL-encoded');
       } else if (error.message.includes('ENOTFOUND') || error.message.includes('getaddrinfo')) {
         console.error('\n💡 Network error: Check your internet connection and MongoDB Atlas cluster status');
+      } else if (error.message.includes('whitelist') || error.reason?.type === 'ReplicaSetNoPrimary') {
+        console.error('\n🔒 IP Whitelist Error:');
+        console.error('   Your server IP is not whitelisted in MongoDB Atlas.');
+        console.error('   This is common when deploying to Render, Vercel, or other cloud platforms.');
+        console.error('\n   📋 To fix this:');
+        console.error('   1. Go to MongoDB Atlas Dashboard');
+        console.error('   2. Navigate to: Network Access → Add IP Address');
+        console.error('   3. For Render deployment, add: 0.0.0.0/0 (Allow access from anywhere)');
+        console.error('      ⚠️  Note: This allows all IPs. For production, consider whitelisting specific IPs.');
+        console.error('   4. Wait 1-2 minutes for changes to propagate');
+        console.error('   5. Restart your Render service');
+        console.error('\n   🔗 Direct link: https://cloud.mongodb.com/v2#/security/network/list');
       }
       
       cached.promise = null;
